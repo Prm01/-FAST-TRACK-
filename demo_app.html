@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LocalStyle - Clothing Store Discovery</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#1a1a2e;display:flex;justify-content:center;align-items:center;
+  min-height:100vh;font-family:'Segoe UI',Calibri,sans-serif;padding:20px;
+}
+.phone{
+  width:390px;height:844px;background:#fff;border-radius:44px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);overflow:hidden;position:relative;
+  display:flex;flex-direction:column;border:3px solid #333;
+}
+.status-bar{
+  padding:12px 24px 8px;display:flex;justify-content:space-between;
+  font-size:12px;font-weight:600;color:#333;background:#fff;
+}
+.screen{flex:1;overflow-y:auto;position:relative;display:none;padding:0 16px;}
+.screen.active{display:block;}
+/* Scrollbar */
+.screen::-webkit-scrollbar{width:3px;}
+.screen::-webkit-scrollbar-thumb{background:#ddd;border-radius:3px;}
+
+/* Splash */
+#splash{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#005A6E,#003640);padding:0;
+}
+#splash .logo{font-size:52px;margin-bottom:12px;}
+#splash h1{color:#fff;font-size:28px;margin-bottom:4px;}
+#splash p{color:#8fc5d0;font-size:14px;margin-bottom:40px;}
+#splash .spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.2);border-top:3px solid #fff;border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Onboarding */
+#onboarding{
+  display:flex;flex-direction:column;background:linear-gradient(135deg,#005A6E,#003640);padding:40px 24px 60px;color:#fff;
+}
+#onboarding .slide{text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center;}
+#onboarding .emoji{font-size:72px;margin-bottom:20px;}
+#onboarding h2{font-size:26px;margin-bottom:12px;}
+#onboarding p{font-size:15px;color:#b0d4dc;line-height:1.6;}
+#onboarding .dots{display:flex;justify-content:center;gap:8px;margin:30px 0;}
+#onboarding .dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.3);}
+#onboarding .dot.active{background:#fff;width:28px;border-radius:5px;}
+#onboarding .btn{background:#fff;color:#005A6E;border:none;padding:16px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;}
+
+/* Bottom Nav */
+.bottom-nav{
+  display:none;height:64px;background:#fff;border-top:1px solid #eee;
+  justify-content:space-around;align-items:center;padding:6px 0 8px;
+}
+.bottom-nav.show{display:flex;}
+.bottom-nav button{
+  background:none;border:none;display:flex;flex-direction:column;align-items:center;
+  gap:2px;cursor:pointer;opacity:0.4;font-size:12px;color:#666;padding:4px 12px;
+}
+.bottom-nav button.active{opacity:1;color:#005A6E;}
+.bottom-nav button .icon{font-size:22px;}
+
+/* Header */
+.app-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0;border-bottom:1px solid #f0f0f0;margin-bottom:12px;
+}
+.app-header h2{font-size:18px;color:#005A6E;}
+.app-header .icons{display:flex;gap:14px;font-size:20px;cursor:pointer;}
+
+/* Search */
+.search-bar{
+  display:flex;align-items:center;background:#f5f7f8;border-radius:12px;
+  padding:10px 14px;margin:8px 0 12px;gap:10px;
+}
+.search-bar input{
+  flex:1;border:none;background:transparent;font-size:14px;outline:none;
+}
+.search-bar .icon{color:#999;font-size:16px;}
+
+/* Categories */
+.categories{display:flex;gap:10px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:none;}
+.categories::-webkit-scrollbar{display:none;}
+.cat-chip{
+  white-space:nowrap;padding:8px 16px;border-radius:20px;background:#f0f6f8;
+  font-size:13px;color:#555;cursor:pointer;border:1px solid transparent;
+}
+.cat-chip.active{background:#005A6E;color:#fff;}
+
+/* Store Cards */
+.store-card{
+  display:flex;gap:12px;padding:14px;border-radius:16px;background:#fafcfd;
+  border:1px solid #eef3f5;margin-bottom:10px;cursor:pointer;transition:0.2s;
+}
+.store-card:hover{background:#f0f6f8;}
+.store-card .img{
+  width:72px;height:72px;border-radius:12px;display:flex;
+  align-items:center;justify-content:center;font-size:28px;flex-shrink:0;
+}
+.store-card .info{flex:1;}
+.store-card .info h3{font-size:15px;color:#222;margin-bottom:2px;}
+.store-card .info .addr{font-size:11px;color:#999;margin-bottom:4px;}
+.store-card .info .tags{display:flex;gap:6px;flex-wrap:wrap;}
+.store-card .info .tags span{
+  font-size:10px;padding:2px 8px;border-radius:10px;background:#e8f4f8;color:#005A6E;
+}
+.store-card .distance{text-align:right;font-size:11px;color:#999;}
+
+/* Map placeholder */
+.map-area{
+  height:140px;border-radius:16px;margin-bottom:12px;overflow:hidden;position:relative;
+  background:linear-gradient(135deg,#e8f4f8,#d0eaf0);
+  display:flex;align-items:center;justify-content:center;border:1px solid #d0eaf0;
+}
+.map-area .map-pins{position:relative;width:100%;height:100%;}
+.map-area .pin{
+  position:absolute;width:28px;height:28px;background:#005A6E;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;
+  box-shadow:0 2px 8px rgba(0,90,110,0.3);cursor:pointer;
+}
+.map-area .pin::after{
+  content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
+  width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;
+  border-top:6px solid #005A6E;
+}
+.map-area .pin-label{
+  position:absolute;font-size:9px;color:#005A6E;font-weight:600;
+  white-space:nowrap;background:rgba(255,255,255,0.9);padding:1px 6px;
+  border-radius:4px;
+}
+
+/* Store Detail */
+.store-header{
+  display:flex;align-items:center;gap:12px;padding:8px 0 12px;
+}
+.store-header .back{font-size:24px;cursor:pointer;padding:4px;}
+.store-header h2{font-size:18px;color:#222;}
+.store-banner{
+  height:160px;border-radius:16px;margin-bottom:12px;
+  display:flex;align-items:flex-end;padding:16px;
+  background:linear-gradient(135deg,#005A6E,#008c9f);
+  color:#fff;
+}
+.store-banner h1{font-size:22px;margin-bottom:2px;}
+.store-banner p{font-size:12px;opacity:0.8;}
+.store-tabs{display:flex;gap:4px;margin:8px 0 12px;}
+.store-tabs button{
+  flex:1;padding:10px;border:none;border-radius:10px;background:#f0f6f8;
+  font-size:13px;cursor:pointer;font-weight:500;
+}
+.store-tabs button.active{background:#005A6E;color:#fff;}
+
+/* Product Items */
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0;}
+.product-item{
+  border-radius:14px;padding:12px;background:#fafcfd;border:1px solid #eef3f5;
+  cursor:pointer;
+}
+.product-item .pimg{
+  height:100px;border-radius:10px;margin-bottom:8px;
+  display:flex;align-items:center;justify-content:center;font-size:36px;
+}
+.product-item h4{font-size:13px;color:#333;margin-bottom:2px;}
+.product-item .price{font-size:14px;font-weight:700;color:#005A6E;}
+.product-item .stock{font-size:10px;color:#8bc34a;}
+
+/* Product Detail Modal */
+.modal-overlay{
+  display:none;position:absolute;inset:0;background:rgba(0,0,0,0.5);
+  z-index:10;backdrop-filter:blur(4px);
+}
+.modal-overlay.show{display:block;}
+.modal{
+  display:none;position:absolute;bottom:0;left:0;right:0;z-index:11;
+  background:#fff;border-radius:24px 24px 0 0;padding:24px;max-height:70%;
+  overflow-y:auto;animation:slideUp 0.3s ease;
+}
+.modal.show{display:block;}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal .handle{width:40px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 16px;}
+.modal .pimg-big{height:180px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:64px;margin-bottom:12px;}
+.modal .close-btn{position:absolute;top:16px;right:16px;font-size:24px;cursor:pointer;background:#f0f0f0;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;}
+.modal h2{font-size:20px;margin-bottom:4px;}
+.modal .price-lg{font-size:24px;font-weight:700;color:#005A6E;margin-bottom:8px;}
+.modal .desc{font-size:13px;color:#666;line-height:1.6;margin-bottom:12px;}
+.modal .size-chips{display:flex;gap:8px;margin:8px 0 12px;}
+.modal .size-chips span{
+  width:40px;height:40px;border-radius:50%;border:1px solid #ddd;
+  display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;
+}
+.modal .size-chips span.active{border-color:#005A6E;background:#e8f4f8;color:#005A6E;font-weight:600;}
+.modal .add-btn{
+  width:100%;padding:16px;background:#005A6E;color:#fff;border:none;
+  border-radius:14px;font-size:16px;font-weight:600;cursor:pointer;margin-top:8px;
+}
+
+/* Cart */
+.cart-item{
+  display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #f0f0f0;align-items:center;
+}
+.cart-item .cimg{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.cart-item .cinfo{flex:1;}
+.cart-item .cinfo h4{font-size:13px;color:#333;}
+.cart-item .cinfo .cprice{font-size:13px;color:#005A6E;font-weight:600;}
+.cart-item .qty{display:flex;align-items:center;gap:8px;}
+.cart-item .qty button{width:28px;height:28px;border-radius:50%;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:14px;}
+.cart-item .qty span{font-size:14px;font-weight:600;}
+
+/* Merchant Dashboard */
+.merchant-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 12px;}
+.stat-card{
+  padding:14px;border-radius:12px;background:#fafcfd;border:1px solid #eef3f5;text-align:center;
+}
+.stat-card .snum{font-size:24px;font-weight:700;color:#005A6E;}
+.stat-card .slabel{font-size:11px;color:#999;}
+.order-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px;border-radius:12px;background:#fafcfd;border:1px solid #eef3f5;margin-bottom:8px;
+}
+.order-item .oinfo h4{font-size:13px;color:#333;}
+.order-item .oinfo p{font-size:11px;color:#999;}
+.order-item .status{padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600;}
+
+/* Notifications */
+.notif-item{
+  display:flex;gap:10px;padding:12px;border-radius:12px;background:#fafcfd;
+  border:1px solid #eef3f5;margin-bottom:8px;align-items:flex-start;
+}
+.notif-item .nicon{font-size:20px;width:36px;height:36px;border-radius:50%;background:#e8f4f8;display:flex;align-items:center;justify-content:center;}
+.notif-item .ninfo h4{font-size:13px;color:#333;}
+.notif-item .ninfo p{font-size:11px;color:#999;}
+.notif-item .ntime{font-size:10px;color:#bbb;margin-top:2px;}
+
+/* Success Screen */
+.success-screen{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 24px;text-align:center;
+}
+.success-screen .check{font-size:64px;margin-bottom:16px;}
+.success-screen h2{font-size:22px;color:#333;margin-bottom:4px;}
+.success-screen p{font-size:14px;color:#999;margin-bottom:24px;}
+.success-screen .btn{background:#005A6E;color:#fff;border:none;padding:14px 40px;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;}
+
+.placeholder-text{text-align:center;padding:40px 0;color:#bbb;font-size:14px;}
+</style>
+</head>
+<body>
+<div class="phone" id="app">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <span>
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none" style="vertical-align:middle"><rect x="0.5" y="0.5" width="14" height="11" rx="1.5" stroke="#333"/><rect x="15" y="3.5" width="2" height="4" rx="0.75" fill="#333"/><rect x="2" y="2.5" width="11" height="7" rx="0.5" fill="#333"/></svg>
+    </span>
+  </div>
+
+  <!-- SPLASH SCREEN -->
+  <div class="screen active" id="splash">
+    <div class="logo">👕</div>
+    <h1>LocalStyle</h1>
+    <p>Discover local fashion stores near you</p>
+    <div class="spinner"></div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div class="screen" id="onboarding">
+    <div class="slide" id="ob-slide">
+      <div class="emoji">📍</div>
+      <h2>Find Nearby Stores</h2>
+      <p>Discover clothing stores around you with interactive map view and real-time distance tracking.</p>
+    </div>
+    <div class="dots">
+      <span class="dot active"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+    <button class="btn" onclick="nextOnboarding()">Next</button>
+  </div>
+
+  <!-- HOME SCREEN -->
+  <div class="screen" id="home">
+    <div class="app-header">
+      <h2>LocalStyle</h2>
+      <div class="icons">
+        <span onclick="showScreen('cart')">🛒</span>
+        <span onclick="showScreen('notifications')">🔔</span>
+      </div>
+    </div>
+    <div class="search-bar">
+      <span class="icon">🔍</span>
+      <input type="text" placeholder="Search stores, styles, brands..." id="searchInput" oninput="filterStores()">
+      <span class="icon">🎛️</span>
+    </div>
+    <div class="categories" id="categoryRow">
+      <span class="cat-chip active" onclick="filterCategory(this,'all')">All</span>
+      <span class="cat-chip" onclick="filterCategory(this,'men')">👔 Men</span>
+      <span class="cat-chip" onclick="filterCategory(this,'women')">👗 Women</span>
+      <span class="cat-chip" onclick="filterCategory(this,'kids')">🧒 Kids</span>
+      <span class="cat-chip" onclick="filterCategory(this,'ethnic')">🥻 Ethnic</span>
+      <span class="cat-chip" onclick="filterCategory(this,'footwear')">👟 Footwear</span>
+    </div>
+    <div class="map-area">
+      <div class="map-pins">
+        <div class="pin" style="top:30%;left:20%;">S</div>
+        <div class="pin-label" style="top:25%;left:26%;">StyleHub</div>
+        <div class="pin" style="top:45%;left:55%;">T</div>
+        <div class="pin-label" style="top:40%;left:62%;">Trends</div>
+        <div class="pin" style="top:22%;left:70%;">F</div>
+        <div class="pin-label" style="top:17%;left:77%;">FashionPoint</div>
+        <div class="pin" style="top:65%;left:35%;">W</div>
+        <div class="pin-label" style="top:60%;left:42%;">Wardrobe</div>
+        <div class="pin" style="top:55%;left:80%;">U</div>
+        <div class="pin-label" style="top:50%;left:87%;">UrbanVogue</div>
+        <div style="position:absolute;bottom:10px;right:10px;font-size:10px;color:#005A6E;background:rgba(255,255,255,0.9);padding:2px 8px;border-radius:6px;">📍 8 stores near you</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#666;margin-bottom:6px;">Nearby Stores</p>
+    <div id="storeList"></div>
+  </div>
+
+  <!-- STORE DETAIL -->
+  <div class="screen" id="store-detail">
+    <div class="store-header">
+      <span class="back" onclick="showScreen('home')">←</span>
+      <h2 id="sd-title">Store Name</h2>
+    </div>
+    <div class="store-banner" id="sd-banner">
+      <div>
+        <h1 id="sd-name">Store Name</h1>
+        <p id="sd-addr">📍 0.5 km away</p>
+      </div>
+    </div>
+    <div class="store-tabs">
+      <button class="active" onclick="switchTab(this,'inventory')">Inventory</button>
+      <button onclick="switchTab(this,'about')">About</button>
+    </div>
+    <div id="inventory-tab">
+      <div class="search-bar" style="margin:4px 0 8px;">
+        <span class="icon">🔍</span>
+        <input type="text" placeholder="Search in this store..." id="storeSearch" oninput="filterStoreProducts()">
+      </div>
+      <div class="product-grid" id="productGrid"></div>
+    </div>
+    <div id="about-tab" style="display:none;">
+      <div style="padding:16px;background:#fafcfd;border-radius:14px;border:1px solid #eef3f5;margin-top:8px;">
+        <p style="font-size:13px;color:#666;line-height:1.8;" id="sd-about">
+          A premium clothing store offering the latest trends in fashion. 
+          We specialize in casual, formal, and ethnic wear for all ages.
+        </p>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid #eee;">
+          <p style="font-size:12px;color:#999;">⏰ Mon-Sat: 10:00 AM - 9:00 PM</p>
+          <p style="font-size:12px;color:#999;">📞 +91 98765 43210</p>
+          <p style="font-size:12px;color:#999;">💳 Cards, UPI, Cash accepted</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT MODAL -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+  <div class="modal" id="productModal">
+    <div style="position:relative;">
+      <button class="close-btn" onclick="closeModal()">✕</button>
+      <div class="handle"></div>
+      <div class="pimg-big" id="pm-img">👕</div>
+      <h2 id="pm-name">Product Name</h2>
+      <div class="price-lg" id="pm-price">₹999</div>
+      <p class="desc" id="pm-desc">Product description goes here.</p>
+      <p style="font-size:12px;color:#999;margin-bottom:4px;">Select Size</p>
+      <div class="size-chips" id="pm-sizes">
+        <span onclick="selectSize(this)">S</span>
+        <span onclick="selectSize(this)" class="active">M</span>
+        <span onclick="selectSize(this)">L</span>
+        <span onclick="selectSize(this)">XL</span>
+      </div>
+      <p style="font-size:12px;color:#8bc34a;margin-bottom:8px;" id="pm-stock">✓ In Stock</p>
+      <button class="add-btn" onclick="addToCart()">Add to Cart</button>
+    </div>
+  </div>
+
+  <!-- CART -->
+  <div class="screen" id="cart">
+    <div class="app-header">
+      <h2>🛒 Cart</h2>
+      <span style="font-size:16px;cursor:pointer;" onclick="showScreen('home')">← Back</span>
+    </div>
+    <div id="cartItems"></div>
+    <div id="cartTotal" style="padding:16px 0;"></div>
+    <div style="padding:8px 0 16px;">
+      <button class="add-btn" onclick="checkout()" id="checkoutBtn" style="display:none;">Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="screen" id="success">
+    <div class="success-screen">
+      <div class="check">✅</div>
+      <h2>Order Placed!</h2>
+      <p>Your order has been confirmed. The store will notify you when ready.</p>
+      <div style="background:#f0f6f8;padding:16px;border-radius:14px;margin-bottom:20px;width:100%;">
+        <p style="font-size:12px;color:#999;margin-bottom:4px;">Order #ORD-2026-0712</p>
+        <p style="font-size:12px;color:#999;">Est. pickup: 2 hours</p>
+      </div>
+      <button class="btn" onclick="showScreen('home')">Continue Shopping</button>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="screen" id="notifications">
+    <div class="app-header">
+      <h2>🔔 Notifications</h2>
+      <span style="font-size:16px;cursor:pointer;" onclick="showScreen('home')">← Back</span>
+    </div>
+    <div class="notif-item">
+      <div class="nicon">🏪</div>
+      <div class="ninfo">
+        <h4>Welcome to LocalStyle!</h4>
+        <p>Discover nearby clothing stores and browse their inventory in real-time.</p>
+        <div class="ntime">Just now</div>
+      </div>
+    </div>
+    <div class="notif-item">
+      <div class="nicon">📦</div>
+      <div class="ninfo">
+        <h4>Order Updates</h4>
+        <p>You'll get notified when stores confirm your orders.</p>
+        <div class="ntime">1 hour ago</div>
+      </div>
+    </div>
+    <div class="notif-item">
+      <div class="nicon">⭐</div>
+      <div class="ninfo">
+        <h4>New Stores Added</h4>
+        <p>3 new clothing stores have joined LocalStyle in your area.</p>
+        <div class="ntime">2 hours ago</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav show" id="bottomNav">
+    <button class="active" onclick="showScreen('home')">
+      <span class="icon">🏠</span><span>Home</span>
+    </button>
+    <button onclick="showScreen('cart')">
+      <span class="icon">🛒</span><span>Cart</span>
+    </button>
+    <button onclick="showScreen('merchant')">
+      <span class="icon">📊</span><span>Merchant</span>
+    </button>
+    <button onclick="showScreen('profile')">
+      <span class="icon">👤</span><span>Profile</span>
+    </button>
+  </div>
+
+  <!-- MERCHANT DASHBOARD -->
+  <div class="screen" id="merchant">
+    <div class="app-header">
+      <h2>📊 Merchant Dashboard</h2>
+      <span style="font-size:14px;cursor:pointer;" onclick="showScreen('home')">← Back</span>
+    </div>
+    <p style="font-size:13px;color:#005A6E;font-weight:600;margin:4px 0;">StyleHub Store</p>
+    <div class="merchant-stats">
+      <div class="stat-card"><div class="snum">32</div><div class="slabel">Orders Today</div></div>
+      <div class="stat-card"><div class="snum">₹8,240</div><div class="slabel">Revenue Today</div></div>
+      <div class="stat-card"><div class="snum">4.7⭐</div><div class="slabel">Rating (48 reviews)</div></div>
+      <div class="stat-card"><div class="snum">12</div><div class="slabel">Items in Stock</div></div>
+    </div>
+    <p style="font-size:13px;color:#666;margin-bottom:6px;">Recent Orders</p>
+    <div class="order-item">
+      <div class="oinfo"><h4>Pramod Y.</h4><p>2 items • ₹1,249</p></div>
+      <span class="status" style="background:#fff3e0;color:#e87c2a;">Confirmed</span>
+    </div>
+    <div class="order-item">
+      <div class="oinfo"><h4>Priya S.</h4><p>1 item • ₹599</p></div>
+      <span class="status" style="background:#e8f5e9;color:#4caf50;">Delivered</span>
+    </div>
+    <div class="order-item">
+      <div class="oinfo"><h4>Rahul K.</h4><p>3 items • ₹2,499</p></div>
+      <span class="status" style="background:#fff3e0;color:#e87c2a;">Confirmed</span>
+    </div>
+    <div class="order-item">
+      <div class="oinfo"><h4>Ananya R.</h4><p>1 item • ₹799</p></div>
+      <span class="status" style="background:#e8f5e9;color:#4caf50;">Delivered</span>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen" id="profile">
+    <div class="app-header">
+      <h2>👤 Profile</h2>
+    </div>
+    <div style="text-align:center;padding:20px 0;">
+      <div style="width:72px;height:72px;border-radius:50%;background:#e8f4f8;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 8px;">👤</div>
+      <h3 style="font-size:16px;">Pramod Yadav</h3>
+      <p style="font-size:12px;color:#999;">pramod@email.com</p>
+    </div>
+    <div style="padding:12px;border-radius:14px;background:#fafcfd;border:1px solid #eef3f5;margin-bottom:8px;">
+      <p style="font-size:13px;color:#333;">📍 Saved Addresses</p>
+      <p style="font-size:11px;color:#999;margin-top:4px;">123, Main Street, City Center</p>
+    </div>
+    <div style="padding:12px;border-radius:14px;background:#fafcfd;border:1px solid #eef3f5;margin-bottom:8px;">
+      <p style="font-size:13px;color:#333;">⭐ My Reviews</p>
+      <p style="font-size:11px;color:#999;margin-top:4px;">5 reviews written</p>
+    </div>
+    <div style="padding:12px;border-radius:14px;background:#fafcfd;border:1px solid #eef3f5;margin-bottom:8px;">
+      <p style="font-size:13px;color:#333;">🎯 Preferred Styles</p>
+      <div class="tags" style="margin-top:6px;">
+        <span style="font-size:11px;padding:4px 10px;border-radius:10px;background:#e8f4f8;color:#005A6E;display:inline-block;margin:2px;">Casual</span>
+        <span style="font-size:11px;padding:4px 10px;border-radius:10px;background:#e8f4f8;color:#005A6E;display:inline-block;margin:2px;">Formal</span>
+        <span style="font-size:11px;padding:4px 10px;border-radius:10px;background:#e8f4f8;color:#005A6E;display:inline-block;margin:2px;">Ethnic</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Data
+const stores = [
+  { id:1,name:'StyleHub',addr:'City Center, 0.5 km',emoji:'👔',category:'men',about:'Premium mens fashion store with curated collection of shirts, trousers, blazers and accessories. Known for quality fabrics and perfect fits.',products:[
+    {name:'Classic Fit Shirt',price:699,emoji:'👔',desc:'Premium cotton formal shirt perfect for office and casual wear.',sizes:['S','M','L','XL'],stock:true},
+    {name:'Slim Chinos',price:999,emoji:'👖',desc:'Stretchable chino pants in charcoal grey.',sizes:['30','32','34','36'],stock:true},
+    {name:'Casual Blazer',price:2499,emoji:'🧥',desc:'Lightweight blazer for semi-formal occasions.',sizes:['M','L','XL'],stock:true},
+    {name:'Leather Belt',price:449,emoji:'🎀',desc:'Genuine leather belt with brass buckle.',sizes:['28','30','32','34'],stock:true},
+  ]},
+  { id:2,name:'Trends Fashion',addr:'Market Road, 0.8 km',emoji:'👗',category:'women',about:'Trendy womens fashion boutique offering the latest styles in ethnic, western, and fusion wear.',products:[
+    {name:'Printed Kurta Set',price:899,emoji:'🥻',desc:'Cotton printed kurta with palazzo and dupatta.',sizes:['S','M','L','XL'],stock:true},
+    {name:'Denim Jacket',price:1499,emoji:'🧥',desc:'Classic blue denim jacket with distressed finish.',sizes:['S','M','L'],stock:true},
+    {name:'Maxi Dress',price:1299,emoji:'👗',desc:'Floral print maxi dress for summer.',sizes:['S','M','L','XL'],stock:false},
+    {name:'Handbag',price:799,emoji:'👜',desc:'Stylish handbag with multiple compartments.',sizes:['One Size'],stock:true},
+  ]},
+  { id:3,name:'FashionPoint',addr:'North Avenue, 1.1 km',emoji:'👕',category:'men',about:'Your one-stop shop for branded menswear and accessories at great prices.',products:[
+    {name:'Polo T-Shirt',price:499,emoji:'👕',desc:'Comfortable cotton polo with embroidered logo.',sizes:['S','M','L','XL','XXL'],stock:true},
+    {name:'Jogger Pants',price:799,emoji:'👖',desc:'French terry joggers with elastic cuffs.',sizes:['M','L','XL'],stock:true},
+    {name:'Sneakers',price:1999,emoji:'👟',desc:'White casual sneakers with cushioned sole.',sizes:['7','8','9','10','11'],stock:true},
+    {name:'Cap',price:299,emoji:'🧢',desc:'Adjustable cotton cap with curved brim.',sizes:['One Size'],stock:true},
+  ]},
+  { id:4,name:'Wardrobe',addr:'South Extension, 1.3 km',emoji:'👗',category:'women',about:'Contemporary womens fashion destination for workwear, party wear, and daily style.',products:[
+    {name:'Office Blouse',price:1099,emoji:'👚',desc:'Silk blend blouse for professional look.',sizes:['S','M','L','XL'],stock:true},
+    {name:'Palazzo Pants',price:699,emoji:'👖',desc:'Flowy palazzo pants with elastic waist.',sizes:['XS','S','M','L'],stock:true},
+    {name:'Statement Necklace',price:349,emoji:'📿',desc:'Trendy gold-toned statement piece.',sizes:['One Size'],stock:true},
+  ]},
+  { id:5,name:'UrbanVogue',addr:'MG Road, 1.6 km',emoji:'🧒',category:'kids',about:'Fun and colorful clothing for kids aged 2-14 years. All fabrics are child-safe and comfortable.',products:[
+    {name:'Kids Graphic Tee',price:349,emoji:'👕',desc:'Cotton t-shirt with fun cartoon print.',sizes:['2Y','4Y','6Y','8Y','10Y'],stock:true},
+    {name:'Denim Shorts',price:499,emoji:'🩳',desc:'Comfortable denim shorts with adjustable waist.',sizes:['2Y','4Y','6Y','8Y'],stock:true},
+    {name:'Party Dress',price:799,emoji:'👗',desc:'Frothy tutu dress with glitter accents.',sizes:['2Y','4Y','6Y'],stock:true},
+  ]},
+  { id:6,name:'Ethnic Elegance',addr:'Old City, 2.0 km',emoji:'🥻',category:'ethnic',about:'Traditional Indian wear for men, women, and children. Wedding and festival special collections.',products:[
+    {name:'Silk Saree',price:2499,emoji:'🥻',desc:'Banarasi silk saree with gold zari work.',sizes:['One Size'],stock:true},
+    {name:'Kurta Pajama Set',price:1299,emoji:'👔',desc:'Cotton kurta with matching pajama.',sizes:['M','L','XL','XXL'],stock:true},
+    {name:'Lehenga Choli',price:3499,emoji:'👗',desc:'Embroidered lehenga set with dupatta.',sizes:['S','M','L'],stock:false},
+    {name:'Jutti',price:599,emoji:'👞',desc:'Handcrafted leather jutti with embroidery.',sizes:['6','7','8','9','10'],stock:true},
+  ]},
+  { id:7,name:'SoleStyle',addr:'City Mall, 1.8 km',emoji:'👟',category:'footwear',about:'Premium footwear store for men, women and kids. All major brands available.',products:[
+    {name:'Running Shoes',price:2999,emoji:'👟',desc:'Lightweight mesh running shoes with air cushion.',sizes:['7','8','9','10','11','12'],stock:true},
+    {name:'Loafers',price:1499,emoji:'👞',desc:'Premium leather loafers for office wear.',sizes:['7','8','9','10'],stock:true},
+    {name:'Sandals',price:699,emoji:'🩴',desc:'Comfortable flip-flops for casual outings.',sizes:['6','7','8','9','10'],stock:true},
+    {name:'Heels',price:1299,emoji:'👠',desc:'Elegant stiletto heels for party wear.',sizes:['5','6','7','8'],stock:false},
+  ]},
+  { id:8,name:'ChicStreet',addr:'Central Plaza, 0.3 km',emoji:'👗',category:'women',about:'Affordable fast fashion for young women. New arrivals every week.',products:[
+    {name:'Crop Top',price:399,emoji:'👚',desc:'Trendy crop top with ribbed fabric.',sizes:['S','M','L'],stock:true},
+    {name:'High-Waist Jeans',price:999,emoji:'👖',desc:'Stretch denim jeans with high-rise waist.',sizes:['26','28','30','32'],stock:true},
+    {name:'Bomber Jacket',price:1399,emoji:'🧥',desc:'Satin bomber jacket with embroidery.',sizes:['S','M','L','XL'],stock:true},
+  ]},
+];
+
+let cart = [];
+let currentModalProduct = null;
+let obStep = 1;
+const obSlides = [
+  {emoji:'📍',title:'Find Nearby Stores',desc:'Discover clothing stores around you with interactive map view and real-time distance tracking.'},
+  {emoji:'👕',title:'Browse Inventory',desc:'Check real-time stock, sizes, and prices at stores near you before you visit.'},
+  {emoji:'🛍️',title:'Order & Pickup',desc:'Reserve items, order online, pay securely, and pick up at the store or get it delivered.'},
+];
+
+function init(){
+  const hash = window.location.hash.slice(1);
+  if(hash==='home'||hash==='cart'||hash==='merchant'||hash==='profile'){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(hash).classList.add('active');
+    document.getElementById('bottomNav').classList.add('show');
+    renderStores();
+    if(hash==='cart') renderCart();
+    document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));
+    const map={home:0,cart:1,merchant:2,profile:3};
+    if(map[hash]!==undefined) document.querySelectorAll('.bottom-nav button')[map[hash]].classList.add('active');
+    return;
+  }
+  if(hash==='store'){
+    renderStores();
+    openStore(1);
+    document.getElementById('bottomNav').classList.add('show');
+    return;
+  }
+  setTimeout(()=>{
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById('onboarding').classList.add('active');
+  },2000);
+}
+
+let currentStore = null;
+
+function renderStores(list=stores){
+  const el = document.getElementById('storeList');
+  el.innerHTML = list.map(s=>`
+    <div class="store-card" onclick="openStore(${s.id})">
+      <div class="img" style="background:${getColor(s.id)}">${s.emoji}</div>
+      <div class="info">
+        <h3>${s.name}</h3>
+        <div class="addr">📍 ${s.addr}</div>
+        <div class="tags">
+          <span>${s.category}</span>
+          <span>${s.products.length} items</span>
+        </div>
+      </div>
+      <div class="distance">${s.addr.split(', ')[1]||''}</div>
+    </div>
+  `).join('');
+}
+
+function getColor(id){
+  const colors=['#e8f4f8','#fce4ec','#e8f5e9','#fff3e0','#f3e5f5','#e0f2f1','#fbe9e7','#e8eaf6'];
+  return colors[(id-1)%colors.length];
+}
+
+function filterStores(){
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const cat = document.querySelector('.cat-chip.active')?.textContent?.trim()?.toLowerCase()||'all';
+  let filtered = stores;
+  if(cat!=='all') filtered = filtered.filter(s=>s.category===cat||s.name.toLowerCase().includes(cat));
+  if(q) filtered = filtered.filter(s=>s.name.toLowerCase().includes(q)||s.addr.toLowerCase().includes(q)||s.products.some(p=>p.name.toLowerCase().includes(q)));
+  renderStores(filtered);
+}
+
+function filterCategory(el,cat){
+  document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  let filtered = stores;
+  if(cat!=='all') filtered = stores.filter(s=>s.category===cat);
+  if(q) filtered = filtered.filter(s=>s.name.toLowerCase().includes(q));
+  renderStores(filtered);
+}
+
+function openStore(id){
+  currentStore = stores.find(s=>s.id===id);
+  document.getElementById('sd-title').textContent = currentStore.name;
+  document.getElementById('sd-name').textContent = currentStore.name;
+  document.getElementById('sd-addr').textContent = '📍 '+currentStore.addr;
+  document.getElementById('sd-about').textContent = currentStore.about;
+  document.getElementById('sd-banner').style.background = `linear-gradient(135deg,${getColor(id)},${getColor(id).replace('#','#7')})`;
+  renderProducts(currentStore.products);
+  showScreen('store-detail');
+}
+
+function renderProducts(products){
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = products.map((p,i)=>`
+    <div class="product-item" onclick="openProduct(${i})">
+      <div class="pimg" style="background:${['#e8f4f8','#fce4ec','#e8f5e9','#fff3e0'][i%4]}">${p.emoji}</div>
+      <h4>${p.name}</h4>
+      <div class="price">₹${p.price}</div>
+      <div class="stock">${p.stock?'✓ In Stock':'✗ Out of Stock'}</div>
+    </div>
+  `).join('');
+}
+
+function filterStoreProducts(){
+  const q = document.getElementById('storeSearch').value.toLowerCase();
+  if(!currentStore) return;
+  const filtered = currentStore.products.filter(p=>p.name.toLowerCase().includes(q));
+  renderProducts(filtered);
+}
+
+function openProduct(idx){
+  if(!currentStore) return;
+  currentModalProduct = {storeIdx:stores.indexOf(currentStore),productIdx:idx};
+  const p = currentStore.products[idx];
+  document.getElementById('pm-img').textContent = p.emoji;
+  document.getElementById('pm-img').style.background = ['#e8f4f8','#fce4ec','#e8f5e9','#fff3e0'][idx%4];
+  document.getElementById('pm-name').textContent = p.name;
+  document.getElementById('pm-price').textContent = '₹'+p.price;
+  document.getElementById('pm-desc').textContent = p.desc;
+  document.getElementById('pm-stock').textContent = p.stock?'✓ In Stock':'✗ Currently Out of Stock';
+  document.getElementById('pm-stock').style.color = p.stock?'#8bc34a':'#e87c2a';
+  const sizes = document.getElementById('pm-sizes');
+  sizes.innerHTML = p.sizes.map(s=>`<span onclick="selectSize(this)"${s==='M'?' class="active"':''}>${s}</span>`).join('');
+  document.getElementById('productModal').classList.add('show');
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function selectSize(el){
+  document.querySelectorAll('#pm-sizes span').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function closeModal(){
+  document.getElementById('productModal').classList.remove('show');
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+function addToCart(){
+  if(!currentModalProduct) return;
+  const p = stores[currentModalProduct.storeIdx].products[currentModalProduct.productIdx];
+  if(!p.stock){alert('Sorry, this item is out of stock!');return;}
+  const size = document.querySelector('#pm-sizes .active')?.textContent||'M';
+  const existing = cart.find(c=>c.name===p.name&&c.size===size&&c.store===stores[currentModalProduct.storeIdx].name);
+  if(existing){existing.qty++}
+  else{cart.push({name:p.name,price:p.price,size,emoji:p.emoji,store:stores[currentModalProduct.storeIdx].name,qty:1})}
+  closeModal();
+  updateCartBadge();
+}
+
+function updateCartBadge(){
+  const count = cart.reduce((s,c)=>s+c.qty,0);
+  const btns = document.querySelectorAll('.bottom-nav button');
+  btns[1].innerHTML = `<span class="icon">${count?'🛒<span style="position:absolute;font-size:9px;background:#e87c2a;color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;margin-left:-22px;margin-top:-8px;">'+count+'</span>':'🛒'}</span><span>Cart</span>`;
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));
+  const navMap={home:0,cart:1,merchant:2,profile:3};
+  const idx = navMap[id];
+  if(idx!==undefined) document.querySelectorAll('.bottom-nav button')[idx].classList.add('active');
+  if(id==='cart') renderCart();
+}
+
+function renderCart(){
+  const el = document.getElementById('cartItems');
+  if(!cart.length){
+    el.innerHTML = '<div class="placeholder-text">Your cart is empty</div>';
+    document.getElementById('cartTotal').innerHTML = '';
+    document.getElementById('checkoutBtn').style.display = 'none';
+    return;
+  }
+  el.innerHTML = cart.map((c,i)=>`
+    <div class="cart-item">
+      <div class="cimg" style="background:${['#e8f4f8','#fce4ec','#e8f5e9','#fff3e0'][i%4]}">${c.emoji}</div>
+      <div class="cinfo">
+        <h4>${c.name}</h4>
+        <p style="font-size:10px;color:#999;">${c.store} • Size ${c.size}</p>
+        <div class="cprice">₹${c.price}</div>
+      </div>
+      <div class="qty">
+        <button onclick="changeQty(${i},-1)">−</button>
+        <span>${c.qty}</span>
+        <button onclick="changeQty(${i},1)">+</button>
+      </div>
+    </div>
+  `).join('');
+  const total = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  document.getElementById('cartTotal').innerHTML = `
+    <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:2px solid #005A6E;">
+      <span style="font-weight:600;">Total</span>
+      <span style="font-weight:700;font-size:18px;color:#005A6E;">₹${total}</span>
+    </div>
+  `;
+  document.getElementById('checkoutBtn').style.display = 'block';
+}
+
+function changeQty(i,delta){
+  cart[i].qty += delta;
+  if(cart[i].qty<=0) cart.splice(i,1);
+  updateCartBadge();
+  renderCart();
+}
+
+function checkout(){
+  if(!cart.length) return;
+  showScreen('success');
+  cart = [];
+  updateCartBadge();
+}
+
+function nextOnboarding(){
+  obStep++;
+  if(obStep>3){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById('home').classList.add('active');
+    document.getElementById('bottomNav').classList.add('show');
+    renderStores();
+    return;
+  }
+  const slide = obSlides[obStep-1];
+  document.getElementById('ob-slide').innerHTML = `
+    <div class="emoji">${slide.emoji}</div>
+    <h2>${slide.title}</h2>
+    <p>${slide.desc}</p>
+  `;
+  document.querySelectorAll('#onboarding .dot').forEach((d,i)=>d.classList.toggle('active',i===obStep-1));
+  if(obStep===3) document.querySelector('#onboarding .btn').textContent = 'Get Started';
+}
+
+function switchTab(btn,tab){
+  document.querySelectorAll('.store-tabs button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('inventory-tab').style.display = tab==='inventory'?'block':'none';
+  document.getElementById('about-tab').style.display = tab==='about'?'block':'none';
+}
+
+init();
+</script>
+</body>
+</html>

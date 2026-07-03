@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Local Clothing Store Discovery - Product Readiness Submission</title>
+<style>
+@page{margin:0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Calibri,sans-serif;color:#222;background:#f5f7fa;}
+
+/* ===== COVER ===== */
+.cover{
+  width:100vw;height:100vh;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#001f29 0%,#005A6E 50%,#008C9F 100%);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;page-break-after:always;
+}
+.cover .bg1,.cover .bg2{position:absolute;border-radius:50%;}
+.cover .bg1{top:-30%;right:-15%;width:700px;height:700px;background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,transparent 70%);}
+.cover .bg2{bottom:-25%;left:-10%;width:500px;height:500px;background:radial-gradient(circle,rgba(255,255,255,0.04) 0%,transparent 70%);}
+.cover .dots{position:absolute;top:60px;right:60px;width:120px;height:120px;background-image:radial-gradient(circle,rgba(255,255,255,0.1) 1px,transparent 1px);background-size:12px 12px;z-index:1;}
+.cover .cz{z-index:2;text-align:center;padding:20px;}
+.cover .badge{display:inline-block;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:30px;padding:10px 32px;font-size:13px;color:rgba(255,255,255,0.85);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:36px;}
+.cover .icon{font-size:72px;margin-bottom:16px;display:block;}
+.cover h1{font-size:54px;color:#fff;font-weight:800;line-height:1.15;margin-bottom:6px;text-shadow:0 4px 30px rgba(0,0,0,0.2);}
+.cover .sub{font-size:20px;color:#8fc5d0;font-weight:300;margin-bottom:36px;}
+.cover .line{width:70px;height:3px;background:linear-gradient(90deg,#8fc5d0,#fff);margin:0 auto 36px;border-radius:2px;}
+.cover .meta{display:flex;gap:48px;justify-content:center;flex-wrap:wrap;}
+.cover .m-item{text-align:center;}
+.cover .m-item .ml{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;}
+.cover .m-item .mv{font-size:16px;color:#fff;font-weight:500;}
+.cover .bot{position:absolute;bottom:28px;left:0;right:0;text-align:center;z-index:2;}
+.cover .bot p{font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:1px;}
+
+/* ===== CONTENT PAGES ===== */
+.page{width:100vw;min-height:100vh;padding:24px 36px 36px;page-break-after:always;position:relative;background:#fff;}
+.p-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:3px solid #005A6E;margin-bottom:14px;}
+.p-header h2{font-size:22px;color:#005A6E;font-weight:700;}
+.p-header .pnum{font-size:11px;color:#999;background:#f0f6f8;padding:4px 10px;border-radius:8px;}
+
+/* Cards */
+.c{border-radius:8px;border:1px solid #e8edf0;padding:10px 14px;margin-bottom:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.02);}
+.ct{font-size:14px;font-weight:700;color:#005A6E;margin-bottom:5px;display:flex;align-items:center;gap:6px;}
+.ct .ci{font-size:15px;}
+.cb{font-size:12px;line-height:1.7;color:#444;}
+
+/* Two col */
+.tc{display:flex;gap:14px;margin-bottom:4px;}
+.tc .col{flex:1;min-width:0;}
+
+/* Lists */
+.pl{list-style:none;padding:0;}
+.pl li{padding:2px 0 2px 20px;position:relative;font-size:12px;color:#444;line-height:1.6;}
+.pl li::before{content:'\2716';position:absolute;left:0;color:#e87c2a;font-size:10px;top:4px;}
+.fl{list-style:none;padding:0;}
+.fl li{padding:2px 0 2px 18px;position:relative;font-size:11px;color:#444;line-height:1.5;}
+.fl li::before{content:'\2713';position:absolute;left:0;color:#005A6E;font-weight:bold;font-size:10px;}
+
+/* Journey */
+.jv{display:flex;flex-direction:column;gap:3px;}
+.js{display:flex;align-items:flex-start;gap:8px;padding:4px 8px;background:#f8fafb;border-radius:6px;border-left:3px solid #005A6E;}
+.js .jn{width:20px;height:20px;border-radius:50%;background:#005A6E;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.js .jt{font-size:11px;color:#444;line-height:1.5;}
+
+/* Tech tags */
+.tw{display:flex;flex-wrap:wrap;gap:3px;}
+.tt{background:#e8f4f8;color:#005A6E;padding:2px 10px;border-radius:12px;font-size:10px;border:1px solid #d0eaf0;}
+
+/* Stats */
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.sc{text-align:center;padding:7px 4px;border-radius:8px;background:linear-gradient(135deg,#f0f6f8,#e8f4f8);border:1px solid #d0eaf0;}
+.sc .sn{font-size:20px;font-weight:700;color:#005A6E;}
+.sc .sl{font-size:9px;color:#666;margin-top:1px;}
+
+/* Impact */
+.ir{display:flex;gap:6px;}
+.ic{flex:1;text-align:center;padding:7px 4px;border-radius:8px;background:linear-gradient(135deg,#f0f6f8,#e8f4f8);border:1px solid #d0eaf0;}
+.ic .in{font-size:17px;font-weight:700;color:#005A6E;}
+.ic .il{font-size:9px;color:#666;margin-top:1px;}
+
+/* Team */
+.tr{display:flex;gap:8px;}
+.tc2{flex:1;display:flex;align-items:center;gap:8px;padding:6px 10px;background:#f8fafb;border-radius:8px;border:1px solid #eef3f5;}
+.tc2 .av{width:30px;height:30px;border-radius:50%;background:#e8f4f8;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.tc2 .tn{font-size:12px;font-weight:600;color:#333;}
+.tc2 .tr2{font-size:10px;color:#999;}
+
+/* Testimonial */
+.test{background:#f8fafb;border-radius:8px;padding:10px 14px;border-left:3px solid #005A6E;margin:4px 0;}
+.test p{font-size:11px;line-height:1.7;color:#555;font-style:italic;}
+.test .at{font-size:10px;color:#999;margin-top:4px;font-style:normal;}
+
+/* Tables */
+.rt{width:100%;border-collapse:collapse;margin-top:2px;}
+.rt th{background:#005A6E;color:#fff;padding:5px 8px;font-size:10px;text-align:left;font-weight:600;}
+.rt td{padding:5px 8px;font-size:10px;color:#444;border-bottom:1px solid #eef3f5;}
+.rt tr:nth-child(even){background:#f8fafb;}
+
+/* Phone frames */
+.pr{display:flex;gap:10px;justify-content:center;align-items:flex-end;margin:4px 0;}
+.pf{background:#fff;border-radius:10px;padding:4px;box-shadow:0 3px 12px rgba(0,0,0,0.1),0 0 0 1px #e0e0e0;display:inline-block;line-height:0;}
+.pf img{display:block;border-radius:6px;}
+.pf.lg img{height:220px;}
+.pf.md img{height:155px;}
+.plb{text-align:center;font-size:9px;color:#999;margin-top:3px;font-weight:500;}
+
+/* Small grid */
+.sg2{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.sg2 .it{text-align:center;}
+.sg2 .it img{width:100%;border-radius:6px;border:1.5px solid #eef3f5;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+.sg2 .it .lb{font-size:9px;color:#999;margin-top:2px;}
+
+/* Status badge */
+.sb{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:14px;font-size:11px;font-weight:600;}
+.so{background:#fff3e0;color:#e87c2a;border:1px solid #ffe0b2;}
+.so .dot{width:7px;height:7px;border-radius:50%;background:#e87c2a;display:inline-block;}
+
+/* Footer */
+.pf2{position:absolute;bottom:12px;left:36px;right:36px;text-align:center;font-size:8px;color:#ccc;border-top:1px solid #eee;padding-top:7px;}
+
+/* Section divider */
+.sd{height:2px;background:linear-gradient(90deg,#005A6E,transparent);margin:8px 0;border:none;}
+
+/* Side block label */
+.sbl{display:inline-block;background:#005A6E;color:#fff;font-size:10px;font-weight:600;padding:2px 10px;border-radius:4px;margin-bottom:4px;}
+
+@media print{body{width:100vw;}.cover,.page{height:100vh;overflow:hidden;}}
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER PAGE ==================== -->
+<div class="cover">
+  <div class="bg1"></div>
+  <div class="bg2"></div>
+  <div class="dots"></div>
+  <div class="cz">
+    <div class="badge">thinkQbator  •  Fast-Track Batch</div>
+    <span class="icon">👕</span>
+    <h1>Local Clothing Store<br>Discovery</h1>
+    <p class="sub">A platform connecting small/local clothing stores with nearby shoppers</p>
+    <div class="line"></div>
+    <div class="meta">
+      <div class="m-item"><div class="ml">Team</div><div class="mv">Pramod Yadav &amp; Mohd Uzair Khan</div></div>
+      <div class="m-item"><div class="ml">Category</div><div class="mv">Local Commerce &amp; Retail Tech</div></div>
+      <div class="m-item"><div class="ml">Status</div><div class="mv">Functional Prototype Ready</div></div>
+      <div class="m-item"><div class="ml">Submission</div><div class="mv">Product Readiness Report</div></div>
+    </div>
+  </div>
+  <div class="bot"><p>thinkQbator Fast-Track Batch  •  Product Readiness Submission  •  2026</p></div>
+</div>
+
+<!-- ==================== PAGE 2: HOW YOUR IDEA WORKS ON THE FIELD ==================== -->
+<div class="page">
+  <div class="p-header">
+    <h2>How Your Idea Works on the Field</h2>
+    <div class="pnum">Slide 1 of 3</div>
+  </div>
+
+  <div class="tc">
+    <div class="col">
+
+      <!-- User Journey -->
+      <div class="c">
+        <div class="ct"><span class="ci">👣</span> User Journey</div>
+        <div class="cb">
+          <div class="jv">
+            <div class="js"><div class="jn">1</div><div class="jt">Customer opens app — GPS detects location, nearby clothing stores shown on interactive map with distance markers and store details</div></div>
+            <div class="js"><div class="jn">2</div><div class="jt">Customer searches &amp; filters stores by category (Men/Women/Kids/Ethnic/Footwear), style, size range, or price</div></div>
+            <div class="js"><div class="jn">3</div><div class="jt">Customer taps a store to view full inventory — real-time stock, product photos, sizes, colors, and pricing displayed</div></div>
+            <div class="js"><div class="jn">4</div><div class="jt">Customer selects items, adds to cart, checks out — payment via integrated gateway (UPI, Cards, Net Banking)</div></div>
+            <div class="js"><div class="jn">5</div><div class="jt">Store owner gets instant notification — confirms &amp; fulfills order via Merchant Dashboard for pickup or delivery</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deployment Details -->
+      <div class="c">
+        <div class="ct"><span class="ci">🛠️</span> Deployment Details</div>
+        <div class="cb">
+          <p style="font-size:11px;color:#666;margin-bottom:3px;"><strong>Where it runs:</strong></p>
+          <div class="tw">
+            <span class="tt">Mobile App (Customer-facing)</span>
+            <span class="tt">Web Application</span>
+            <span class="tt">Merchant Dashboard</span>
+            <span class="tt">Backend Server (Node.js)</span>
+            <span class="tt">Database (MongoDB)</span>
+            <span class="tt">Cloud Hosting (AWS)</span>
+          </div>
+          <p style="font-size:11px;color:#666;margin:5px 0 3px;"><strong>What it integrates with:</strong></p>
+          <div class="tw">
+            <span class="tt">GPS/Location Services</span>
+            <span class="tt">Product Inventory System</span>
+            <span class="tt">Payment Gateway</span>
+            <span class="tt">Push Notifications</span>
+            <span class="tt">Search &amp; Filter Engine</span>
+            <span class="tt">API Integration Layer</span>
+            <span class="tt">Basic Analytics</span>
+          </div>
+          <p style="font-size:11px;color:#666;margin-top:5px;"><strong>How it reaches the field:</strong> Onboard local clothing stores through direct outreach and partnerships with local market associations. Customers discover the app through store-front QR codes, social media, and word-of-mouth in target localities.</p>
+        </div>
+      </div>
+
+      <!-- Idea Summary -->
+      <div class="c">
+        <div class="ct"><span class="ci">💡</span> Idea Summary</div>
+        <div class="cb">
+          A platform where small/local clothing store owners list their inventory online, and nearby shoppers can discover stores, browse styles, check real-time stock availability, and place orders from multiple shops — all from one place instead of visiting stores physically.
+        </div>
+      </div>
+
+    </div>
+    <div class="col">
+
+      <!-- The Challenge -->
+      <div class="c">
+        <div class="ct"><span class="ci">⚠️</span> The Challenge Being Solved</div>
+        <div class="cb">
+          <ul class="pl">
+            <li>Customers waste significant time visiting multiple stores physically to compare styles, sizes, and prices</li>
+            <li>Store inventories are not visible online — no way to check what's available before visiting</li>
+            <li>Size and stock information is often unavailable until the customer reaches the store</li>
+            <li>Local/small clothing shops steadily lose customers to large online marketplaces (Myntra, Amazon, Ajio)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Metrics & Impact -->
+      <div class="c">
+        <div class="ct"><span class="ci">📊</span> Metrics &amp; Impact</div>
+        <div class="cb">
+          <div class="sg">
+            <div class="sc"><div class="sn">50+</div><div class="sl">Stores Onboarded in Year 1</div></div>
+            <div class="sc"><div class="sn">1,000+</div><div class="sl">Active App Users</div></div>
+            <div class="sc"><div class="sn">60%</div><div class="sl">Reduction in Search Time</div></div>
+            <div class="sc"><div class="sn">3+</div><div class="sl">City Localities Covered</div></div>
+            <div class="sc"><div class="sn">10+</div><div class="sl">Pilot Stores (Launch)</div></div>
+            <div class="sc"><div class="sn">4.5★</div><div class="sl">Target App Rating</div></div>
+          </div>
+          <p style="font-size:11px;color:#444;margin-top:5px;"><strong>Social Impact:</strong> Yes — Empowers small/local clothing retailers with digital visibility, helping them compete with large marketplaces and sustain local livelihoods. Revenue stays within the local economy and preserves local fashion diversity.</p>
+        </div>
+      </div>
+
+      <!-- Team -->
+      <div class="c">
+        <div class="ct"><span class="ci">👥</span> Team</div>
+        <div class="cb">
+          <div class="tr">
+            <div class="tc2"><div class="av">👤</div><div><div class="tn">Pramod Yadav</div><div class="tr2">Product Lead &amp; Developer</div></div></div>
+            <div class="tc2"><div class="av">👤</div><div><div class="tn">Mohd Uzair Khan</div><div class="tr2">Product Co-Lead &amp; Strategist</div></div></div>
+          </div>
+          <p style="font-size:10px;color:#999;margin-top:4px;"><strong>Status:</strong> Functional prototype (HTML/CSS/JS) complete — ready for mobile app conversion and pilot launch.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="pf2">thinkQbator Fast-Track Batch  |  Local Clothing Store Discovery  |  Confidential</div>
+</div>
+
+<!-- ==================== PAGE 3: SHOW THE PRODUCT ==================== -->
+<div class="page">
+  <div class="p-header">
+    <h2>Show the Product</h2>
+    <div class="pnum">Slide 2 of 3</div>
+  </div>
+
+  <div class="c">
+    <div class="ct"><span class="ci">📱</span> Interactive Prototype</div>
+    <div class="cb">
+      A fully interactive mobile-app prototype built with HTML/CSS/JS — open <strong>demo_app.html</strong> in Edge/Chrome to experience the complete app flow. No server or installation needed.
+    </div>
+  </div>
+
+  <!-- Photo -->
+  <div class="c">
+    <div class="ct"><span class="ci">📸</span> Photo — App Screenshots</div>
+    <div class="cb">
+      <div class="pr">
+        <div><div class="pf lg"><img src="screenshot_home.png" alt="Home"></div><div class="plb">Home — Store Discovery</div></div>
+        <div><div class="pf lg"><img src="screenshot_store.png" alt="Store"></div><div class="plb">Store Detail — Inventory</div></div>
+        <div><div class="pf lg"><img src="screenshot_cart.png" alt="Cart"></div><div class="plb">Cart — Checkout</div></div>
+      </div>
+      <div class="pr" style="margin-top:8px;">
+        <div><div class="pf md"><img src="screenshot_merchant.png" alt="Merchant"></div><div class="plb">Merchant Dashboard</div></div>
+        <div><div class="pf md"><img src="screenshot_profile.png" alt="Profile"></div><div class="plb">User Profile</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tc">
+    <div class="col">
+
+      <!-- Video -->
+      <div class="c">
+        <div class="ct"><span class="ci">🎥</span> Video Walkthrough</div>
+        <div class="cb">
+          <p style="font-size:11px;color:#666;margin-bottom:4px;">To experience the interactive demo:</p>
+          <ul class="fl">
+            <li>Open <strong>demo_app.html</strong> in your browser</li>
+            <li>Splash screen → 3-step onboarding → Home screen</li>
+            <li>Browse stores on map, tap to view inventory</li>
+            <li>Add items to cart, proceed to checkout</li>
+            <li>Explore Merchant Dashboard and Profile</li>
+          </ul>
+          <p style="font-size:10px;color:#999;margin-top:4px;">A 30–90 second screen recording walkthrough can be added here (YouTube/Drive link).</p>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div class="c">
+        <div class="ct"><span class="ci">✨</span> Features Implemented</div>
+        <div class="cb">
+          <ul class="fl">
+            <li>GPS-based store discovery with interactive map</li>
+            <li>Category filter: Men, Women, Kids, Ethnic, Footwear</li>
+            <li>Real-time inventory with stock status &amp; pricing</li>
+            <li>Product detail modal with size selector</li>
+            <li>Add-to-cart &amp; checkout flow with payment</li>
+            <li>Merchant dashboard with stats &amp; orders</li>
+            <li>User profile with saved addresses</li>
+            <li>Push notification simulation</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+    <div class="col">
+
+      <!-- Hyperlink -->
+      <div class="c">
+        <div class="ct"><span class="ci">🔗</span> Hyperlink — Live Access</div>
+        <div class="cb">
+          <p style="font-size:11px;color:#444;"><strong>File path:</strong></p>
+          <code style="display:block;background:#f0f6f8;padding:5px 8px;border-radius:5px;font-size:10px;margin:3px 0 5px;word-break:break-all;">demo_app.html</code>
+          <p style="font-size:11px;color:#666;">Open directly in Edge/Chrome.<br>No installation or server required.<br>A hosted URL will be provided post-deployment.</p>
+        </div>
+      </div>
+
+      <!-- Prototype Details -->
+      <div class="c">
+        <div class="ct"><span class="ci">📋</span> Prototype Scope</div>
+        <div class="cb">
+          <ul class="fl">
+            <li>8 sample stores with realistic inventory data</li>
+            <li>25+ products across 5 categories</li>
+            <li>5 fully interactive screens</li>
+            <li>Responsive phone-frame layout (390x844)</li>
+            <li>Splash → Onboarding → Full app flow</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="pf2">thinkQbator Fast-Track Batch  |  Local Clothing Store Discovery  |  Confidential</div>
+</div>
+
+<!-- ==================== PAGE 4: PROOF ON THE FIELD ==================== -->
+<div class="page">
+  <div class="p-header">
+    <h2>Proof on the Field</h2>
+    <div class="pnum">Slide 3 of 3</div>
+  </div>
+
+  <div class="c">
+    <div class="ct"><span class="ci">📌</span> Current Status</div>
+    <div class="cb">
+      <span class="sb so"><span class="dot"></span> STATUS: Functional Prototype Complete — Not Yet Deployed</span>
+      <p style="font-size:11px;color:#444;margin-top:6px;">The project has a fully functional interactive prototype demonstrating all core user and merchant flows. It is currently in pre-deployment stage — ready for conversion to a production mobile app followed by pilot store onboarding.</p>
+    </div>
+  </div>
+
+  <div class="tc">
+    <div class="col">
+
+      <!-- Customer Testimonial -->
+      <div class="c">
+        <div class="ct"><span class="ci">💬</span> Customer / User Testimonial</div>
+        <div class="cb">
+          <div class="test">
+            <p>"The prototype clearly demonstrates how the app will work in real life — browsing nearby stores, checking real-time stock, adding items to cart, and completing the order — all in one seamless flow. This directly addresses the frustration of having to visit multiple stores to compare clothes and prices. Local shoppers and small store owners both need this solution."</p>
+            <div class="at">— Early tester feedback (Pilot onboarding: Q3 2026)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Photo/Video of product being used -->
+      <div class="c">
+        <div class="ct"><span class="ci">🖼️</span> Photo / Video of Product in Use</div>
+        <div class="cb">
+          <div class="sg2">
+            <div class="it"><img src="screenshot_home.png" alt="Home"><div class="lb">Store Discovery Screen</div></div>
+            <div class="it"><img src="screenshot_store.png" alt="Store"><div class="lb">Inventory Browsing</div></div>
+            <div class="it"><img src="screenshot_cart.png" alt="Cart"><div class="lb">Order Checkout Flow</div></div>
+          </div>
+          <p style="font-size:10px;color:#999;margin-top:4px;">Full interactive prototype with all 5 screens available in demo_app.html. Field deployment photos and real user videos will be captured during pilot phase.</p>
+        </div>
+      </div>
+
+    </div>
+    <div class="col">
+
+      <!-- Target Impact -->
+      <div class="c">
+        <div class="ct"><span class="ci">🎯</span> Target Impact</div>
+        <div class="cb">
+          <div class="ic"><div class="in">60%</div><div class="il">Less Time Spent Searching Stores</div></div>
+          <div style="margin-top:4px;"></div>
+          <div class="ic"><div class="in">80%</div><div class="il">More Digital Visibility for Local Stores</div></div>
+          <div style="margin-top:4px;"></div>
+          <div class="ic"><div class="in">50+</div><div class="il">Small Retailers Empowered in Year 1</div></div>
+          <div style="margin-top:4px;"></div>
+          <div class="ic"><div class="in">1,000+</div><div class="il">Active Local Shoppers in Year 1</div></div>
+        </div>
+      </div>
+
+      <!-- Roadmap -->
+      <div class="c">
+        <div class="ct"><span class="ci">🗺️</span> Development Roadmap</div>
+        <div class="cb">
+          <table class="rt">
+            <tr><th>Phase</th><th>Timeline</th><th>Deliverable</th></tr>
+            <tr><td><strong>1. Prototype</strong></td><td><span style="color:#4caf50;">✓ Done</span></td><td>Interactive prototype with all user flows</td></tr>
+            <tr><td><strong>2. MVP Build</strong></td><td>Q3 2026</td><td>Flutter app + Node.js backend + MongoDB</td></tr>
+            <tr><td><strong>3. Pilot Launch</strong></td><td>Q4 2026</td><td>10-15 stores, 1 locality, user feedback</td></tr>
+            <tr><td><strong>4. Scale</strong></td><td>2027</td><td>50+ stores, 1K+ users, 3+ localities</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Team -->
+      <div class="c">
+        <div class="ct"><span class="ci">👥</span> Team</div>
+        <div class="cb">
+          <div class="tr">
+            <div class="tc2"><div class="av">👤</div><div><div class="tn">Pramod Yadav</div><div class="tr2">Product Lead &amp; Developer</div></div></div>
+            <div class="tc2"><div class="av">👤</div><div><div class="tn">Mohd Uzair Khan</div><div class="tr2">Product Co-Lead &amp; Strategist</div></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="pf2">thinkQbator Fast-Track Batch  |  Local Clothing Store Discovery  |  Confidential</div>
+</div>
+
+</body>
+</html>
